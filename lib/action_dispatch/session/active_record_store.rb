@@ -81,7 +81,7 @@ module ActionDispatch
       def write_session(request, sid, session_data, options)
         logger.silence_logger do
           record = get_session_model(request, sid)
-
+          
           # _________ This part is complete hack - Dinesh 2016-10-26 _________
           if session_data["warden.user.user.key"].present?
             user_key = session_data["warden.user.user.key"].try(:first).try(:first)

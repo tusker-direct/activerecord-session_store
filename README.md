@@ -1,5 +1,5 @@
-Active Record Session Store
-===========================
+Active Record Session Store - Tusker Edition
+============================================
 
 A session store backed by an Active Record class. A default class is
 provided, but any object duck-typing to an Active Record Session class
@@ -101,6 +101,10 @@ information into the log, and it is required for security reason.
 ## Contributing to Active Record Session Store
 
 Active Record Session Store is work of many contributors. You're encouraged to submit pull requests, propose features and discuss issues.
+
+## This gem is forked version
+
+Edited ```write_session``` method is ActionDispatch::Session::ActiveRecordStore
 
 See [CONTRIBUTING](CONTRIBUTING.md).
 
