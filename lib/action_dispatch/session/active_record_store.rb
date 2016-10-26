@@ -71,7 +71,7 @@ module ActionDispatch
             # If the sid was nil or if there is no pre-existing session under the sid,
             # force the generation of a new sid and associate a new session associated with the new sid
             sid = generate_sid
-            session = @@session_class.new(:session_id => sid, :data => {})
+            session = @@session_class.new(:session_id => sid, :data => {}, :user_id => nil)
           end
           request.env[SESSION_RECORD_KEY] = session
           [sid, session.data]
@@ -81,7 +81,22 @@ module ActionDispatch
       def write_session(request, sid, session_data, options)
         logger.silence_logger do
           record = get_session_model(request, sid)
+
+          # _________ This part is complete hack - Dinesh 2016-10-26 _________
+          if session_data["warden.user.user.key"].present?
+            user_key = session_data["warden.user.user.key"].try(:first).try(:first)
+            record.user_id = user_key
+          end
+          
+          if session_data["user_id"].present?
+            user_id = session_data["user_id"].try(:uid)
+
+            record.user_id = user_id
+          end
+          # _________ end of the hack _________
+
           record.data = session_data
+          
           return false unless record.save
 
           session_data = record.data
@@ -124,7 +139,7 @@ module ActionDispatch
           model = @@session_class.find_by_session_id(id)
           if !model
             id = generate_sid
-            model = @@session_class.new(:session_id => id, :data => {})
+            model = @@session_class.new(:session_id => id, :data => {}, :user_id => nil)
             model.save
           end
           if request.env[ENV_SESSION_OPTIONS_KEY][:id].nil?
